@@ -68,7 +68,7 @@ def parse_tokens(
     while options := current_index:
         arg = tokens.popleft()
         if arg.value not in options:
-            raise ParsingError(arg, f"Expected argument to be in {options}")
+            raise ParsingError(arg, f"Expected argument to be in {options}, this could be an ambiguous function call, try wrapping it in {}")
 
         if tokens.popleft().type is not TokenType.col:
             raise ParsingError(arg,
