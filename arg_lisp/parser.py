@@ -66,9 +66,13 @@ def parse_tokens(
     # Map out the arguments to the current function
     current_index = fun_trie[tkn.value]
     while options := current_index:
+        if len(tokens) == 0:
+            raise ParsingError(tkn, f"Not a complete function call, missing {options}")
         arg = tokens.popleft()
+        if arg.type == TokenType.lis and arg.value == "}":
+            break
         if arg.value not in options:
-            raise ParsingError(arg, f"Expected argument to be in {options}, this could be an ambiguous function call, try wrapping it in {}")
+            raise ParsingError(arg, f"Expected argument to be in {options}, this could be an ambiguous function call, try wrapping it in {{}}")
 
         if tokens.popleft().type is not TokenType.col:
             raise ParsingError(arg,

@@ -39,3 +39,8 @@ def test_token_types():
     assert Token(value='123.45', start=loc, end=loc).type == TokenType.num
     assert Token(value='call', start=loc, end=loc).type == TokenType.ide
 
+def test_mixed_parens():
+    tokens = tokenize("if:{is:4} then:7")
+
+    assert tokens[1].start.column == 2
+    assert to_string(tokens) == "if : { is : 4 } then : 7"

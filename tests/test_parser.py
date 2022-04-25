@@ -33,10 +33,22 @@ def test_parser_non_unique_func():
     parsed = parse("is:4 greaterthan:6", base_fun_table())
     assert repr(parsed) == "{is: 4, greaterthan: 6}"
 
-def test_parser_no_func():
-    # TODO: This should be a specific exception
+def test_parser_ambiguous_func():
+    fun_table = base_fun_table()
+    fun_table.add_func({"is"})
+    with pytest.raises(ParsingError):
+        parsed = parse("if:is:4 then:7 else:5", fun_table)
+
+    parsed = parse("if:{is:4} then:7 else:5", fun_table)
+    assert repr(parsed) == "{if: {is: 4}, then: 7, else: 5}"
+
+def test_parser_unknown_arg():
     with pytest.raises(ParsingError):
         parsed = parse("is:4 notacondition:6", base_fun_table())
+
+def test_parser_missing_arg():
+    with pytest.raises(ParsingError):
+        parsed = parse("if:3 then:4", base_fun_table())
 
 def test_simple_parser():
     simple_fib = """
