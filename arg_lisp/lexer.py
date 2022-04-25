@@ -1,64 +1,87 @@
-from collections import namedtuple
-from typing import List
+from collections import deque
+from enum import Enum
+from dataclasses import dataclass
 
-Source = namedtuple('Source', 'line column')
-# Token = namedtuple('Token', 'value source', defaults = [Source(0,0)])
 
+@dataclass(frozen=True)
+class SourcePoint:
+    line: int
+    column: int
+
+class TokenType(str, Enum):
+    col = "colon"
+    lis = "list"
+    bol = "boolean"
+    str = "string"
+    num = "number"
+    ide = "identifier"
+    err = "error"
+
+@dataclass(frozen=True)
 class Token:
-    def __init__(self, value: str, source: Source = Source(0, 0)):
-        self.value = value
-        self.source = source
+    value: str
+    start: SourcePoint
+    end: SourcePoint
+
     def __repr__(self):
-        return str(self.value)
+        return self.value
 
-# def eat_whitespace(src: List[str], ch:int, ln:int) -> Tuple[int, int]:
-#     while src[ln][ch].isspace():
-#         if ch == len(src[ln]) - 1:
-#             ch = 0
-#             ln += 1
-#         elif ch < len(src[ln]):
-#             ch += 1
-
-#     return ch, ln
-
-# def eat_until_whitespace(src: List[str], ch:int, ln:int) -> Tuple[Token, int, int]:
-#     characters = []
-#     start = Source(ch, ln)
-#     while not src[ln][ch].isspace():
-#         characters.append(src[ln][ch])
-#         if ch == len(src[ln]) - 1:
-#             ch = 0
-#             ln += 1
-#         elif ch < len(src[ln]):
-#             ch += 1
-
-#     return Token(''.join(characters), start), ch, ln
+    @property
+    def type(self) -> TokenType:
+        if self.value == ':':
+            return TokenType.col
+        elif self.value == '{' or self.value == '}':
+            return TokenType.lis
+        elif self.value[0] == '#':
+            return TokenType.bol
+        elif self.value[0] == '"':
+            return TokenType.str
+        elif self.value[0].isdigit():
+            return TokenType.num
+        else:
+            return TokenType.ide
 
 
-# def lexer(source: str) -> List[str]:
-#     char = 0
-#     line = 0
-#     src = source.split('\n')
-#     tokens = []
-#     while line <= len(src) and char < len(src[line]):
-#         char, line = eat_whitespace(src, char, line)
-#         token, char, line = eat_until_whitespace(src, char, line)
-#         tokens.append(token)
+def tokenize(program: str) -> deque[Token]:
+    tokens = deque()
+    i = -1
+    in_string = False
+    line, col = 0, -1
+    current_token = Token(value="", start=SourcePoint(0, 0), end=SourcePoint(0, 0))
+    while i < len(program) -1:
+        i += 1
+        col += 1
+        char = program[i]
+        loc = SourcePoint(line=line, column=col)
+        if in_string:
+            current_token = Token(value=current_token.value+char, start=current_token.start, end=loc)
+            if char == '"':
+                in_string = False
+        else:
+            if char.isspace():
+                if current_token.value:
+                    loc = SourcePoint(line=line, column=col+1)
+                    tokens.append(current_token)
+                    current_token = Token(value="", start=loc, end=loc)
+                # Sorry windows users :(
+                if char == '\n':
+                    col = -1
+                    line += 1
+                continue
+            elif char == '"':
+                in_string = True
+            elif char == ':' or char == "{" or char == "}":
+                if current_token.value:
+                    tokens.append(current_token)
+                    next_loc = SourcePoint(line=line, column=col+1)
+                    current_token = Token(value="", start=next_loc, end=next_loc)
+                tokens.append(Token(value=char, start=loc, end=loc))
+            else:
+                current_token = Token(value=current_token.value+char, start=current_token.start, end=loc)
 
-#     if line < len(src):
-#         print("ERROR IN THE LEXER, reached end of line before the end of document")
+    if current_token.value:
+        tokens.append(current_token)
 
-#     print(char, line)
-
-# lexer('   hello\n\tvalue:world')
-
-# For now the parser is whats important so we're going to move ahead with the simplest tokenizer
-# TODO: Add debug symbols to tokens
-def tokenize(source: str) -> List[str]:
-    # Courtesy of: http://norvig.com/lispy.html
-    tokens = source.replace('{', ' { ').replace('}', ' } ').replace(';', '; ').replace(': {', ':{').split()
-    # return [Token(t) for t in tokens]
     return tokens
 
-        
 
