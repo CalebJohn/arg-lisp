@@ -4,9 +4,9 @@ arg-lisp
 arg-lisp is an alternative lisp syntax built around the concept of n-expressions, where an n-expression is
 
 1. An atom
-2. An unordered list of key-value pairs (a map/dictionary)
+2. An unordered list of key-value pairs (a map/dictionary/associative array)
 
-e.g. 2+2 is represented as {add:2 and:2} in n-expression form.
+e.g. 2+2 is represented as `{add:2 and:2}` in n-expression form.
 
 More clearly, if an s-expression function call has the form:
 
@@ -35,10 +35,13 @@ add:2 and:2
 
 The former is totally un-ambiguous, but as you'll see, the later can be much more pleasing to work with.
 
+arg-list is not an implementation of a language (yet). It's an imagining of a language that could exist in an alternate universe (one where associative arrays are king). This repo contains the parsing code for a stripped down version of the language.
+
+
 ## Fibonacci Sequence
 The below is an example of a recursive Fibonacci sequence generator. It uses the brace-less syntax, which is fine in this case because there is no ambiguity.
 
-```plaintext
+```ts
 fn:{fib:n} on:
     if: is:n lessthan:2 then:
         n
