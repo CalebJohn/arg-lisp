@@ -15,7 +15,7 @@ More clearly, if an s-expression function call has the form:
 ```
 
 The equivalent n-expression has the form:
-```ts
+```plaintext
 {name1:arg1 name2:arg2 ....}
 ```
 
@@ -23,13 +23,13 @@ Notice that the `function_name` is dropped in favour of argument names. By conve
 
 The braces are generally optional, but required in the case of ambiguity. This means that
 
-```ts
+```plaintext
 {add:2 and:2}
 ```
 
 is equivalent to
 
-```ts
+```plaintext
 add:2 and:2
 ```
 
@@ -41,7 +41,7 @@ arg-list is not an implementation of a language (yet). It's an imagining of a la
 ## Fibonacci Sequence
 The below is an example of a recursive Fibonacci sequence generator. It uses the brace-less syntax, which is fine in this case because there is no ambiguity.
 
-```ts
+```plaintext
 fn:{fib:n} on:
     if: is:n lessthan:2 then:
         n
