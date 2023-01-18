@@ -19,7 +19,6 @@ def test_parser():
 def test_parser_reverse():
     parsed = parse("and:4 add:6", base_fun_table())
 
-    # the purpose of this test is actually to ensure it parsed
     assert repr(parsed) == "{and: 4, add: 6}"
 
 def test_parser_long():
