@@ -37,6 +37,8 @@ The former is totally un-ambiguous, but as you'll see, the later can be much mor
 
 arg-list is not an implementation of a language (yet). It's an imagining of a language that could exist in an alternate universe (one where associative arrays are king). This repo contains the parsing code for a stripped down version of the language.
 
+For a history of alternative syntaxes (and expressions) for lisp, [see here](https://github.com/shaunlebron/history-of-lisp-parens/blob/master/alt-syntax.md).
+
 
 ## Fibonacci Sequence
 The below is an example of a recursive Fibonacci sequence generator. It uses the brace-less syntax, which is fine in this case because there is no ambiguity.
